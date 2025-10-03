@@ -2,22 +2,23 @@
 
 pragma solidity ^0.8.18;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 contract BasicNft is ERC721 {
     uint256 private s_tokenCounter; 
+    mapping(uint256 => string) private s_tokenIdToUri;
 
     constructor() ERC721("Doggie", "DOG") {
         s_tokenCounter = 0; // Initialize token counter when contract is deployed
     }
 
-    function mintNft() public returns (uint256) {
-        s_tokenCounter += 1; // Increment token counter
+    function mintNft(string memory tokenURI) public {
+        s_tokenIdToUri[s_tokenCounter] = tokenURI; // Map the token ID to its URI`
         _safeMint(msg.sender, s_tokenCounter); // Mint the NFT to the caller's address
-        return s_tokenCounter; // Return the new token ID
+        s_tokenCounter++; // Increment the token counter for the next mint
     }
 
     function tokenURI (uint256 tokenId) public view override returns (string memory) {
-        
+        return s_tokenIdToUri[tokenId];
     }
 }
